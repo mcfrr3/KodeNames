@@ -7,6 +7,7 @@ A popular word game.
   * Original
   * 1000 most common nouns
   * Top 250 Movies
+  * Rude CAH cards
   * Custom word set (create your own!)
 * Picture sets
   * Online pictures from https://unsplash.it/
