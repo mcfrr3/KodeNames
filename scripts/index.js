@@ -18,7 +18,8 @@ var local_images = [];
 var COLOR_RED = "#ff0000";
 var COLOR_YELLOW = "#ffff00";
 var COLOR_BLUE = "#00eeee";
-var COLOR_BLACK = "#808080";
+var COLOR_GRAY = "#808080";
+var COLOR_BLACK = "#000000";
 var COLOR_GREEN = "#009000";
 var COLOR_WHITE = "#FFFFFF";
 
@@ -270,7 +271,7 @@ function doTint(value, colour) {
 	// game end
 	if (colour == "black" || colour == COLOR_BLACK) {
 		document.getElementById(value).style.color = "white";
-		document.body.style.backgroundColor = COLOR_BLACK;
+		document.body.style.backgroundColor = COLOR_GRAY;
 	}
 }
 
