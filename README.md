@@ -10,12 +10,13 @@ A popular word game.
   * Custom word set (create your own!)
 * Picture sets
   * Online pictures from https://unsplash.it/
+  * Local pictures
 * Colorblind friendly Colors
 * Muli-language compaitible with google translate
 * Mobile friendly
 
 # Instructions:
-1. Distribute website to players
+1. Distribute website to players: https://sw-tracker.github.io/KodeNames/
 2. Make sure each person uses the same SEED. This will sync your words.
 3. Spymasters click on spymaster button to see key. 
 

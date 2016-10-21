@@ -13,6 +13,7 @@ var number_of_items = NUMBER_OF_WORDS;
 var spyMasterMode = false;
 var sessionData = [];
 var customData = [];
+var local_images = [];
 
 var COLOR_RED = "#ff0000";
 var COLOR_YELLOW = "#ffff00";
@@ -30,9 +31,39 @@ $("#gameMode").change(function() {
 	fire();
 });
 
-
 $("#seed").val(Math.floor(Math.random() * 1000));
 fire();
+
+function handleFileSelect(evt) {
+	var files = evt.target.files;
+	local_images = [];
+
+	for (var i = 0, f; f = files[i]; i++) {
+		var reader = new FileReader();
+
+		// Closure to capture the file information.
+		reader.onload = (function(theFile) {
+			return function(e) {
+				// Render thumbnail.
+				var span = document.createElement('span');
+				span.innerHTML = ['<img src="', e.target.result,
+								'" title="', escape(theFile.name), '" height=\"100%\" width=\"98%\"/>'].join('');
+				local_images[local_images.length] = span.innerHTML;
+
+				// we have to wait until all images are loaded before we trigger the beggining of the game
+				if (document.getElementById("files").files.length == local_images.length) {
+					fire();
+				}
+			};
+		})(f);
+
+		// Read in the image file as a data URL.
+		reader.readAsDataURL(f);
+	}
+}
+
+document.getElementById("files").value = "";
+document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 function fire() {
 	//get seed and set the seed for randomizer
@@ -41,6 +72,26 @@ function fire() {
 
 	var option = $('#gameMode :selected').val();
 	number_of_items = NUMBER_OF_WORDS;
+
+	if (option == 'local_pic') {
+		if (window.File && window.FileReader && window.FileList && window.Blob) {
+		  	// Great success! All the File APIs are supported.
+		} else {
+		  	alert('The File APIs are not fully supported in this browser.');
+			document.getElementById('gameMode').value = "online_pic";
+			option = "online_pic";
+		}
+		if (local_images.length < NUMBER_OF_PICTURES) {
+			alert('Click on the BROWSE button and select some pictures first. Minimum ' + NUMBER_OF_PICTURES + ' images.');
+		}
+	}
+
+	if (option == 'local_pic') {
+		document.getElementById("files").style.visibility = "visible";
+	} else {
+		document.getElementById("files").style.visibility = "hidden";
+	}
+
 	switch (option) {
 		case '2knouns':
 			sessionData = data.slice(0);
@@ -60,6 +111,14 @@ function fire() {
 			sessionData = [];
 			for (var i = 1; i <= 500; i++) {
                sessionData.push(i);
+            }
+			number_of_items = NUMBER_OF_PICTURES;
+			break;
+		case 'local_pic':
+			// dummy numbers to reuse functionality
+			sessionData = [];
+			for (var i = 1; i <= local_images.length; i++) {
+               sessionData.push(local_images[i]);
             }
 			number_of_items = NUMBER_OF_PICTURES;
 			break;
@@ -92,6 +151,7 @@ function totalGuesses() {
     var total_guesses = 8;
     switch (option) {
 		case 'online_pic':
+		case 'local_pic':
 			return 7;
 	}
 	return 8;
@@ -100,14 +160,15 @@ function totalGuesses() {
 function createNewGame() {
 	var trs = [];
 	var option = $('#gameMode :selected').val();
-	var imgWidth = $(window).width() / 5.5;
-    var imgHeight = $(window).height() / 4.5;
+	var imgWidth = Math.floor($(window).width() / 5.5);
+    var imgHeight = Math.floor($(window).height() / 4.5);
 
     // how many items per row (pictures vs words)
     var items_per_row = 5;
     var row_type = "row";
     switch (option) {
 		case 'online_pic':
+		case 'local_pic':
 			items_per_row = 4;
 			row_type = "row_pic";
 			break;
@@ -127,8 +188,11 @@ function createNewGame() {
 		switch (option) {
 			case 'online_pic':
 				// link to pictures, example:
-				// https://unsplash.it/305.45454545454544/168.54545454545453?image=931
-				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' src=\"https://unsplash.it/" + imgWidth + i + "/" + imgHeight + "?image=" + word + "\"><span class=\"ada\"></span></a></div></div>";
+				// https://unsplash.it/305/202?image=931
+				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' src=\"https://unsplash.it/" + imgWidth + "/" + imgHeight + "?image=" + word + "\"><span class=\"ada\"></span></a></div></div>";
+				break;
+			case 'local_pic':
+				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' " + word + "<span class=\"ada\"></span></a></div></div>";
 				break;
 			default:
 				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><span class=\"ada\"></span>" + word + "</a></div></div>";
