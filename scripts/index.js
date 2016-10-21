@@ -73,17 +73,25 @@ function fire() {
 	var option = $('#gameMode :selected').val();
 	number_of_items = NUMBER_OF_WORDS;
 
-	if (option == 'local_pic') {
-		if (window.File && window.FileReader && window.FileList && window.Blob) {
-		  	// Great success! All the File APIs are supported.
-		} else {
-		  	alert('The File APIs are not fully supported in this browser.');
-			document.getElementById('gameMode').value = "online_pic";
-			option = "online_pic";
-		}
-		if (local_images.length < NUMBER_OF_PICTURES) {
-			alert('Click on the BROWSE button and select some pictures first. Minimum ' + NUMBER_OF_PICTURES + ' images.');
-		}
+	switch (option) {
+		case 'local_pic':
+			if (window.File && window.FileReader && window.FileList && window.Blob) {
+				// Great success! All the File APIs are supported.
+			} else {
+				alert('The File APIs are not fully supported in this browser.');
+				document.getElementById('gameMode').value = "online_pic";
+				option = "online_pic";
+			}
+			if (local_images.length < NUMBER_OF_PICTURES) {
+				alert('Click on the BROWSE button and select some pictures first. Minimum ' + NUMBER_OF_PICTURES + ' images.');
+			}
+			break;
+		case 'cah':
+			if (!window.confirm("This uses X-Rated content. Are you older than 18?")) {
+				document.getElementById('gameMode').value = "default";
+                option = "default";
+			}
+			break;
 	}
 
 	if (option == 'local_pic') {
@@ -98,6 +106,9 @@ function fire() {
 			break;
 		case 'movies':
 			sessionData = movieData.slice(0);
+			break;
+		case 'cah':
+			sessionData = cahData.slice(0);
 			break;
 		case 'custom':
 			if (customData.length === 0) {
