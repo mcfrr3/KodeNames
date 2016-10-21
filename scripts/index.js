@@ -79,15 +79,17 @@ function fire() {
 				// Great success! All the File APIs are supported.
 			} else {
 				alert('The File APIs are not fully supported in this browser.');
-				document.getElementById('gameMode').value = "online_pic";
-				option = "online_pic";
+				document.getElementById('gameMode').value = "default";
+				option = "default";
 			}
 			if (local_images.length < NUMBER_OF_PICTURES) {
 				alert('Click on the BROWSE button and select some pictures first. Minimum ' + NUMBER_OF_PICTURES + ' images.');
 			}
 			break;
 		case 'cah':
-			if (!window.confirm("This uses X-Rated content. Are you older than 18?")) {
+			if (window.confirm("This uses X-Rated content. Are you older than 18?")) {
+				// we are old enough
+			} else {
 				document.getElementById('gameMode').value = "default";
                 option = "default";
 			}
@@ -118,6 +120,7 @@ function fire() {
 			sessionData = customData.slice(0);
 			break;
 		case 'online_pic':
+		case 'online_bw_pic':
 			// dummy numbers to reuse functionality
 			sessionData = [];
 			for (var i = 1; i <= 500; i++) {
@@ -162,6 +165,7 @@ function totalGuesses() {
     var total_guesses = 8;
     switch (option) {
 		case 'online_pic':
+		case 'online_bw_pic':
 		case 'local_pic':
 			return 7;
 	}
@@ -179,6 +183,7 @@ function createNewGame() {
     var row_type = "row";
     switch (option) {
 		case 'online_pic':
+		case 'online_bw_pic':
 		case 'local_pic':
 			items_per_row = 4;
 			row_type = "row_pic";
@@ -194,13 +199,18 @@ function createNewGame() {
 		}
 		var randomNumber = Math.floor(Math.random() * sessionData.length);
 		var word = sessionData[randomNumber];
+		var grayscale_pic = "";
 		removeItem(sessionData, randomNumber);
 		wordsSelected.push(word);
 		switch (option) {
+			case 'online_bw_pic':
+				grayscale_pic = "g/";
+				// fall through on purpose
 			case 'online_pic':
 				// link to pictures, example:
-				// https://unsplash.it/305/202?image=931
-				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' src=\"https://unsplash.it/" + imgWidth + "/" + imgHeight + "?image=" + word + "\"><span class=\"ada\"></span></a></div></div>";
+				// colour:    https://unsplash.it/305/202?image=931
+				// grayscale: https://unsplash.it/g/305/202?image=931
+				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' src=\"https://unsplash.it/" + grayscale_pic + imgWidth + "/" + imgHeight + "?image=" + word + "\"><span class=\"ada\"></span></a></div></div>";
 				break;
 			case 'local_pic':
 				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' " + word + "<span class=\"ada\"></span></a></div></div>";
@@ -272,7 +282,18 @@ function clicked(value) {
 		//guessers mode
 		var word = wordsSelected[value];
 		if (document.getElementById("confirm").checked) {
-			if (window.confirm("Are sure you want to select '" + word + "'?")) {
+			var option = $('#gameMode :selected').val();
+			var question = "";
+			switch (option) {
+				case 'online_pic':
+				case 'online_bw_pic':
+				case 'local_pic':
+					question = "Are you sure you want to select this picture?";
+					break;
+				default:
+					question = "Are sure you want to select '" + word + "'?";
+			}
+			if (window.confirm(question)) {
 				doTint(value, teams[value]);
 			}
 		} else {
