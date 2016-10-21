@@ -173,7 +173,59 @@ function totalGuesses() {
 	return 8;
 }
 
-function createTeams() {
+function createNewGame() {
+	var trs = [];
+	var option = $('#gameMode :selected').val();
+	var imgWidth = Math.floor($(window).width() / 5.5);
+    var imgHeight = Math.floor($(window).height() / 4.5);
+
+    // how many items per row (pictures vs words)
+    var items_per_row = 5;
+    var row_type = "row";
+    switch (option) {
+		case 'online_pic':
+		case 'online_bw_pic':
+		case 'local_pic':
+			items_per_row = 4;
+			row_type = "row_pic";
+			break;
+		default:
+			items_per_row = 5;
+			row_type = "row";
+	}
+	// populate each row data
+	for (var i = 0; i < number_of_items; i++) {
+		if (!trs[i % items_per_row]) {
+			trs[i % items_per_row] = "";
+		}
+		var randomNumber = Math.floor(Math.random() * sessionData.length);
+		var word = sessionData[randomNumber];
+		var grayscale_pic = "";
+		removeItem(sessionData, randomNumber);
+		wordsSelected.push(word);
+		switch (option) {
+			case 'online_bw_pic':
+				grayscale_pic = "g/";
+				// fall through on purpose
+			case 'online_pic':
+				// link to pictures, example:
+				// colour:    https://unsplash.it/305/202?image=931
+				// grayscale: https://unsplash.it/g/305/202?image=931
+				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' src=\"https://unsplash.it/" + grayscale_pic + imgWidth + "/" + imgHeight + "?image=" + word + "\"><span class=\"ada\"></span></a></div></div>";
+				break;
+			case 'local_pic':
+				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' " + word + "<span class=\"ada\"></span></a></div></div>";
+				break;
+			default:
+				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><span class=\"ada\"></span>" + word + "</a></div></div>";
+		}
+	}
+	//<a href="#"><span class="ada">Washington stimulates economic growth </span>Read me</a>
+	for (var i = 0; i < trs.length; i++) {
+		document.getElementById("board").innerHTML += '<div class="' + row_type + '">' + trs[i] + '</div>'
+	}
+
+	//create teams
     var total_guesses = totalGuesses();
 	for (var i = 0; i < total_guesses; i++) {
 		teams.push(COLOR_RED);
@@ -205,65 +257,6 @@ function createTeams() {
 
 	//shuffle teams
 	shuffle(teams);
-}
-
-function createNewGame() {
-	var trs = [];
-	var option = $('#gameMode :selected').val();
-	var imgWidth = Math.floor($(window).width() / 5.5);
-    var imgHeight = Math.floor($(window).height() / 4.5);
-
-    createTeams();
-
-    // how many items per row (pictures vs words)
-    var items_per_row = 5;
-    var row_type = "row";
-    switch (option) {
-		case 'online_pic':
-		case 'online_bw_pic':
-		case 'local_pic':
-			items_per_row = 4;
-			row_type = "row_pic";
-			break;
-		default:
-			items_per_row = 5;
-			row_type = "row";
-	}
-
-	// populate each row data
-	for (var i = 0; i < number_of_items; i++) {
-		if (!trs[i % items_per_row]) {
-			trs[i % items_per_row] = "";
-		}
-		var randomNumber = Math.floor(Math.random() * sessionData.length);
-		var word = sessionData[randomNumber];
-		var grayscale_pic = "";
-		removeItem(sessionData, randomNumber);
-		wordsSelected.push(word);
-		switch (option) {
-			case 'online_bw_pic':
-				grayscale_pic = "g/";
-				// fall through on purpose
-			case 'online_pic':
-				// link to pictures, example:
-				// colour:    https://unsplash.it/305/202?image=931
-				// grayscale: https://unsplash.it/g/305/202?image=931
-				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' src=\"https://unsplash.it/" + grayscale_pic + imgWidth + "/" + imgHeight + "?image=" + word + "\"><span class=\"ada\"></span></a></div></div>";
-				break;
-			case 'local_pic':
-				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><img id=\'pic" + i + "\' " + word + "<span class=\"ada\"></span></a></div></div>";
-				break;
-			default:
-				trs[i % items_per_row] += "<div class=\"word\" id=\'" + i + "\' onclick=\"clicked(\'" + i + "\')\"><div><a href=\"#\"><span class=\"ada\"></span>";
-				trs[i % items_per_row] += "<font id=\"font" + i + "\" color=\"black\">" + word + "</font>";
-				trs[i % items_per_row] += "</a></div></div>";
-		}
-	}
-
-	//<a href="#"><span class="ada">Washington stimulates economic growth </span>Read me</a>
-	for (var i = 0; i < trs.length; i++) {
-		document.getElementById("board").innerHTML += '<div class="' + row_type + '">' + trs[i] + '</div>'
-	}
 
 	updateScore();
 	document.body.style.backgroundColor = COLOR_WHITE;
@@ -277,9 +270,8 @@ function doTint(value, colour) {
 
 	// game end
 	if (colour == "black" || colour == COLOR_BLACK) {
-		document.getElementById("font" + value).style.color = "white";
+		document.getElementById(value).style.color = "white";
 		document.body.style.backgroundColor = COLOR_GRAY;
-		alert("You lost!");
 	}
 }
 
@@ -359,8 +351,8 @@ function spyMaster() {
 	spyMasterMode = true;
 	for (var i = 0; i < number_of_items; i++) {
 		document.getElementById(i).style.backgroundColor = teams[i];
-		if (teams[i] == "black" || teams[i] == COLOR_BLACK) {
-			document.getElementById("font" + i).style.color = "white";
+		if (teams[i] == "black") {
+			document.getElementById(i).style.color = "white";
 		}
 	}
 }
