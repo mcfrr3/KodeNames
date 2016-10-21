@@ -10,7 +10,7 @@ A popular word game.
   * Rude CAH cards (x-rated)
   * Custom word set (create your own!)
 * Picture sets
-  * Online pictures from https://unsplash.it/
+  * Online pictures (colour or grayscale) from https://unsplash.it/
   * Local pictures
 * Colorblind friendly Colors
 * Muli-language compaitible with google translate
