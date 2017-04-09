@@ -20,7 +20,10 @@ A popular word game.
 # Instructions:
 1. Distribute website to players: https://sw-tracker.github.io/KodeNames/
 2. Make sure each person uses the same SEED. This will sync your words.
-3. Spymasters click on spymaster button to see key. 
+3. Spymasters click on spymaster button to see key.
+4. Pick a team to be red or blue.
+5. The starting team colour will be shown on the left side of the page as a vertical blue/red line.
+6. On the top left of the page you can see a red and blue number, the starting team must guess 1 extra word. This number shows the number of words left to uncover and win.
 
 # Feedback
 If you have any issues or would like to request some features, please click on the issue tab and start a ticket. I will get back to you asap.
