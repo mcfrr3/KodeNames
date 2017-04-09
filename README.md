@@ -5,15 +5,16 @@ A popular word game.
 * ADA Compliant
 * Word sets
   * Original
+  * Original (Spanish)
   * 1000 most common nouns
   * Top 250 Movies
   * Rude CAH cards (x-rated)
   * Custom word set (create your own!)
 * Picture sets
-  * Online pictures (colour or grayscale) from https://unsplash.it/
-  * Local pictures
+  * Online pictures (colour or gray-scale) from https://unsplash.it/
+  * Custom pictures
 * Colorblind friendly Colors
-* Muli-language compaitible with google translate
+* Multi-language compatible with google translate
 * Mobile friendly
 
 # Instructions:

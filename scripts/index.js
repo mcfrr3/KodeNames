@@ -1,6 +1,6 @@
 /*
 Notes: 
-'data' is lazily imported from the html
+'__Data' is lazily imported from the html
 'seedrandom' is also imported from html. it gives deterministic random #s based on a seed set in fire()
 */
 
@@ -79,7 +79,7 @@ function handleFileSelect(evt) {
 			};
 		})(f);
 
-		// Read in the image file as a data URL.
+		// Read in the image file as a URL.
 		reader.readAsDataURL(f);
 	}
 }
@@ -102,8 +102,11 @@ function fire() {
 	}
 
 	switch (option) {
+		case 'spanish_words':
+			sessionData = esData.slice(0);
+			break;
 		case '2knouns':
-			sessionData = data.slice(0);
+			sessionData = nounsData.slice(0);
 			break;
 		case 'movies':
 			sessionData = movieData.slice(0);
@@ -191,7 +194,7 @@ function createNewGame() {
 			items_per_row = 5;
 			row_type = "row";
 	}
-	// populate each row data
+	// populate each row
 	for (var i = 0; i < number_of_items; i++) {
 		if (!trs[i % items_per_row]) {
 			trs[i % items_per_row] = "";
@@ -234,16 +237,12 @@ function createNewGame() {
 	}
 
 	// one extra for one of the teams
-	if (Math.floor(Math.random() * data.length) % 2 === 0) {
+	if (Math.floor(Math.random() * nounsData.length) % 2 === 0) {
 		teams.push(COLOR_RED);
-		// document.getElementById("team").style.color = COLOR_RED;
-		// document.getElementById("team").innerHTML = "RED";
 		$('#board').addClass('redStarts').removeClass('blueStarts');
 
 	} else {
 		teams.push(COLOR_BLUE);
-		// document.getElementById("team").style.color = COLOR_BLUE;
-		// document.getElementById("team").innerHTML = "BLUE";
 		$('#board').addClass('blueStarts').removeClass('redStarts');
 	}
 
